@@ -29,7 +29,6 @@ v1.2	2018.05.14
 		6. Add BGP/IP prefix check
 		7. Ping tool: add customer election/peer election
 		8. Popup send mail window if can't find the peer/realm in ccb
-		9.Test GitHub
 
 Pending function: 
 1. UPX compressed, smaller size 20M --> 15M
