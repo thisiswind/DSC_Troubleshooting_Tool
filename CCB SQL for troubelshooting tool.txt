@@ -1,0 +1,63 @@
+def CCB_ONLINE2CSV():
+	import datetime
+	import pymysql.cursors
+	namelist=[] 
+	#连接配置信息
+	config = {
+		'host':'hk1p-gen-ccb-mdb002.syniverse.com',
+		'port':3310,
+		'user':'ccbapp',
+		'password':'MiC2B$ma',
+		'db':'ccb',
+		'charset':'utf8mb4',
+		'cursorclass':pymysql.cursors.DictCursor,
+		}
+	# 创建连接
+	connection = pymysql.connect(**config)
+
+# 执行sql语句
+	try:
+		with connection.cursor() as cursor:
+			# 执行sql语句，进行查询
+			sql = """SELECT ci.`name`,ss.id, ni.item, ni.`value`
+FROM subscribedservice ss
+LEFT JOIN customerinfo ci ON ss.customerid=ci.id
+RIGHT JOIN neinfo ni ON ss.id=ni.pkgid
+WHERE service='Diameter_Signalling' AND ni.item IN ('CustomerNodeRealm','DRACustomerRealmName', 'DRACustomerRealmNameBeforeTranslation','DRAIMSIPrefix')"""
+			cursor.execute(sql)
+			# 获取查询结果
+			results = cursor.fetchall()
+			#没有设置默认自动提交，需要主动提交，以保存所执行的语句
+		connection.commit()
+ 
+	finally:
+		connection.close();
+
+	import csv
+
+	with open('.\\file\ccb_online.csv', 'w',newline='') as csvfile:
+		spamwriter = csv.writer(csvfile)
+		string=[]
+		for keys in results[1]:
+			string.append(keys)
+		spamwriter.writerow(string)
+		for row in results:
+			string=[]
+			string.append(row['name'])
+			string.append(row['id'])
+			string.append(row['item'])
+			string.append(row['value'])
+			spamwriter.writerow(string)
+	return(results)
+	
+	
+	
+	select np4.value Virtual_Realm,ci.name Operator,ni.value DSC_Peer,ni.aicent Realm,np1.value SCTP_IP,np2.value Pingable,np3.value WorkMode,replace(GROUP_CONCAT(DISTINCT con.email),',',';') Customer_Contact from neinfo ni 
+left join subscribedservice ss on ss.id=ni.pkgid 
+left join customerinfo ci on ci.id=ss.customerid 
+left join contactinfo con on con.pkgid=ni.pkgid and con.contacttype in ('Technical','Noc-Imported') and con.email like '%@%' 
+left join neavpair np1 on np1.neitemid=ni.id and np1.attribute='SCTP_IP'
+left join neavpair np2 on np2.neitemid=ni.id and np2.attribute='Pingable'
+left join neavpair np3 on np3.neitemid=ni.id and np3.attribute='WorkMode'
+left join neavpair np4 on np4.neitemid=ni.id and np4.attribute='Virtual Realm'
+where ni.item='DSC_Peer' group by ni.value;
