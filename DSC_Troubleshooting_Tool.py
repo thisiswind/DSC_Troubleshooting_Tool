@@ -48,8 +48,9 @@ from PyQt5.QtWidgets import *
 from DSC_Troubleshooting_Tool_ui import *
 from DSC_Login_ui import *
 from Input_alarms_ui import *
-from ssh_ping_cmd import ssh_onetime_ping, ssh_jump_server_cmd
+from ssh_ping_cmd import ssh_onetime_ping, ssh_jump_server_cmd,ssh_jump_server_juniper_cmd,ssh_jump_server_cisco_cmd
 from SendEmail import sendemail,html_line_break
+from get_router_list_from_traceroute import *
 
 
 """****************************************************************************************************"""
@@ -96,6 +97,7 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
 		self.pushButton_p2ptracert.clicked.connect(self.ssh_exe_cmd)
 		self.pushButton_s2sping.clicked.connect(self.ssh_exe_cmd)
 		self.pushButton_s2stracert.clicked.connect(self.ssh_exe_cmd)
+		self.pushButton_start_7_24_ping.clicked.connect(self.start_7_24_ping)
 		
 		#troubleshooting tool
 		self.pushButton_input_alarms.clicked.connect(self.input_alarms)
@@ -772,6 +774,29 @@ where ni.item='DSC_Peer' group by ni.value;"""
 				sendemail(customer_email_list,'DSS_Route_Provision@syniverse.com;TTAC@syniverse.com',Subject,email_body)
 		except NameError:
 			pass
+			
+			
+
+#***    Function: 7*24 Ping     ***
+
+	def start_7_24_ping(self):
+		global username, password
+		username="g800472"
+		password="Selenium666$"
+		try:
+			router_list=get_router_list_from_traceroute(self.textEdit_traceroute_result.toPlainText(),username,password)
+			print(router_list)
+		except Exception as e:
+			print(e)
+
+		"""serverlist=['10.164.28.175','10.164.28.176','10.164.28.253','10.164.20.49','10.164.20.50','10.166.28.189','10.166.28.190','10.166.29.2','10.166.20.54','10.166.20.55']
+		for i in serverlist:
+			if 'tail -f' in self.textEdit_command.toPlainText():
+				time.sleep(0.2)
+			t= threading.Thread(target=self.sendmultiserver,args=(i,))
+			t.start()
+		self.label_status.setText('Status: In Progress...')"""
+
 
 """****************************************************************************************************"""
 """***************************             2. Login Window            *********************************"""
@@ -808,6 +833,7 @@ class My_login(QMainWindow, Ui_Dialog_login):
 """****************************************************************************************************"""
 """***************************          3. Input alarm window          ********************************"""
 """****************************************************************************************************"""
+
 class Input_alarms(QMainWindow, Ui_Dialog_input_alarms):
 
 	alarms_inputed_signal = pyqtSignal(str)
@@ -824,6 +850,7 @@ class Input_alarms(QMainWindow, Ui_Dialog_input_alarms):
 		self.alarms_inputed_signal.emit(self.textEdit_alarm_content.toPlainText())
 		self.textEdit_alarm_content.setPlainText('')
 		self.close()
+
 
 """****************************************************************************************************"""
 """***************************                  4. Run               **********************************"""

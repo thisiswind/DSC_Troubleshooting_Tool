@@ -1,0 +1,47 @@
+Cisco:
+
+airtel-bng-india>show clock                       
+03:01:47.315 UTC Thu Aug 23 2018
+
+airtel-bng-india>ping 131.166.150.157             
+Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 131.166.150.157, timeout is 2 seconds:
+!!!!!
+Success rate is 100 percent (5/5), round-trip min/avg/max = 1/1/1 ms
+
+
+airtel-bng-india>ping 131.166.150.1   
+Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 131.166.150.1, timeout is 2 seconds:
+.....
+Success rate is 0 percent (0/5)
+
+
+************************************************************************************
+
+Juniper:
+
+g800472@r002-hnk2-ngn> show system uptime | match current    
+Current time: 2018-08-23 03:08:08 GMT
+
+{master}
+
+
+g800472@r002-hnk2-ngn> ping 192.168.71.206 count 5 rapid wait 1    
+PING 192.168.71.206 (192.168.71.206): 56 data bytes
+!!!!!
+--- 192.168.71.206 ping statistics ---
+5 packets transmitted, 5 packets received, 0% packet loss
+round-trip min/avg/max/stddev = 34.198/34.259/34.358/0.053 ms
+
+
+g800472@r002-hnk2-ngn> ping 192.168.71.20 count 5 rapid wait 1     
+PING 192.168.71.20 (192.168.71.20): 56 data bytes
+ping: sendto: No route to host
+.ping: sendto: No route to host
+.ping: sendto: No route to host
+.ping: sendto: No route to host
+.ping: sendto: No route to host
+.
+--- 192.168.71.20 ping statistics ---
+5 packets transmitted, 0 packets received, 100% packet loss
